@@ -39,7 +39,7 @@
                 <div class="row">
                     <div class="col-xl-4 col-md-12 grid-margin">
                         <div class="row">
-                            <div class="card col-md-12" style="min-height: 350px;">
+                            <div class="card col-md-12" style="min-height: 425px;">
                                 <div class="card-body">
                                     <div class="card-title">
                                         <h4 class="card-title">Target</h4>
@@ -65,7 +65,8 @@
                             <div class="card col-md-12">
                                 <div class="card-body">
                                     <h4 class="card-title">Orginal Image</h4>
-                                    <input type="file" name="faceswap_image" class="dropify" data-height="250" data-max-file-size="3M"/>
+                                    <input type="file" name="faceswap_image" class="dropify" data-height="250"
+                                           data-max-file-size="3M"/>
                                 </div>
                             </div>
 
@@ -77,18 +78,28 @@
                             <div class="card-body">
                                 <div class="d-flex flex-row justify-content-between">
                                     <h4 class="card-title mb-1">Faceswap Video</h4>
-                                    <button id="GenerateBtn" class="btn btn-warning mb-1" type="button">Generate</button>
+                                    <button id="GenerateBtn" class="btn btn-warning mb-1" type="button">Generate
+                                    </button>
                                 </div>
-                                <div class="row">
+                                <div class="row" id="result" style="display: none">
                                     <div class="col-12">
-
-                                        <div class="d-flex justify-content-center" style="min-height: 450px;">
-                                            <div id="loading" class="spinner-border text-primary"
-                                                 style="width: 5rem; height: 5rem;margin: auto; display: none" role="status">
-                                                <span class="sr-only"></span>
+                                        <div class="d-flex justify-content-between flex-column pt-4"
+                                             style="min-height: 640px;">
+                                            <div class="d-flex justify-content-center" style="min-height: 580px;">
+                                                <video id="generatedVideo" style="max-height: 580px; width: 650px"
+                                                       class="img-thumbnail img-fluid mx-auto d-block"
+                                                       controls>
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                                <div id="loading" class="spinner-border text-primary"
+                                                     style="width: 5rem; height: 5rem;margin: auto; display: none"
+                                                     role="status">
+                                                    <span class="sr-only"></span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <a class="btn btn-success" id="download">download</a>
                                 </div>
                             </div>
                         </div>
@@ -136,15 +147,28 @@
                 contentType: false,
                 processData: false,
                 beforeSend: function () {
+                    $("#result").show();
                     $("#loading").show();
                 },
                 success: function (data) {
                     $("#loading").hide();
-                    console.log(data);
+                    var videoElement = document.getElementById("generatedVideo");
+
+                    // Convert file data to base64 string
+                    // Assuming imageData is the base64-encoded video data
+
+                    // Set the src attribute of the video element to the base64 data
+                    videoElement.src = "data:video/mp4;base64," + data.video;
+
+                    // Display the video element
+                    videoElement.style.display = "block";
+
+                    $("#download").attr("href","{{ url_for('download_file', filename='') }}"+ data.link)
                 },
                 error: function (error) {
                     // Xử lý lỗi (nếu cần)
                     $("#loading").hide();
+                    $("#result").hide();
                     console.log(error)
                     alert(error.responseJSON.error);
                 }

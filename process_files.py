@@ -23,7 +23,10 @@ transformer_Arcface = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
-
+transformer = transforms.Compose([
+        transforms.ToTensor(),
+        #transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
 
 def swap_specific_video(video_path, pic_specific, pic_a):
     opt = TestOptions().parse()
