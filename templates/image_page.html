@@ -50,14 +50,16 @@
                                         <a class="btn btn-outline-primary" href="{{ url_for('video_page') }}"> VIDEO</a>
                                     </div>
 
-                                    <input type="file" name="target_image" class="dropify" data-height="250" accept="image/*"
+                                    <input type="file" name="target_image" class="dropify" data-height="250"
+                                           accept="image/.jpg"
                                            data-max-file-size="3M"/>
                                 </div>
                             </div>
                             <div class="card col-md-12">
                                 <div class="card-body">
                                     <h4 class="card-title">Original Image</h4>
-                                    <input type="file" name="faceswap_image" class="dropify" data-height="250" accept="image/*"
+                                    <input type="file" name="faceswap_image" class="dropify" data-height="250"
+                                           accept="image/.jpg"
                                            data-max-file-size="3M"/>
                                 </div>
                             </div>
@@ -77,10 +79,10 @@
                                     <div class="col-12">
                                         <div class="d-flex justify-content-between flex-column pt-4"
                                              style="min-height: 640px;">
-                                            <div style="min-height: 580px">
+                                            <div class="d-flex justify-content-center" style="min-height: 580px">
                                                 <img src="" alt="" id="generatedImage"
-                                                     style="max-height: 580px;"
-                                                     class="img-thumbnail img-fluid mx-auto d-block">
+                                                     style="max-height: 580px;min-height: 550px;"
+                                                     class="img-thumbnail img-fluid mx-auto">
                                                 <div id="loading" class="spinner-border text-primary"
                                                      style="width: 5rem; height: 5rem;margin: auto; display: none"
                                                      role="status">
@@ -129,7 +131,9 @@
         $("#GenerateBtn").click(function () {
             // Lấy dữ liệu từ biểu mẫu
             var formData = new FormData($("#ImageForm")[0]);
+            // Tìm thẻ img trong HTML bằng id
 
+            var imgElement = document.getElementById("generatedImage");
             // Gửi yêu cầu AJAX
             $.ajax({
                 type: "POST",
@@ -138,17 +142,16 @@
                 contentType: false,
                 processData: false,
                 beforeSend: function () {
+                    imgElement.style.display = "none";
+                    imgElement.src = "";
                     $("#result").show();
-                    $("#loading").show();
+                    $("#download").attr("href", "");
+                    $("#loading").css("display","block");
                 },
                 success: function (data) {
                     $("#loading").hide();
                     console.log(data);
                     var imageData = data.image;
-
-                    // Tìm thẻ img trong HTML bằng id
-
-                    var imgElement = document.getElementById("generatedImage");
 
                     // Chuyển đổi dữ liệu file thành base64 string
 
@@ -158,7 +161,7 @@
 
                     imgElement.src = "data:image/jpg;base64," + imageData;
                     imgElement.style.display = "block";
-                    $("#download").attr("href","{{ url_for('download_file', filename='') }}"+ data.link)
+                    $("#download").attr("href", "{{ url_for('download_file', filename='') }}" + data.link)
                 },
                 error: function (error) {
                     // Xử lý lỗi (nếu cần)

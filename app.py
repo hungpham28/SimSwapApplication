@@ -3,10 +3,11 @@ from flask_restful import Api, Resource
 import time
 import base64
 
-# import process_files
+import process_files
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+app.config["CACHE_TYPE"] = "null"
 api = Api(app)
 
 
@@ -67,7 +68,9 @@ class GenerateVideoResource(Resource):
         target_video.save('./uploads/' + target_video.filename)
         faceswap_image.save('./uploads/' + faceswap_image.filename)
         # - Gọi hàm xử lý video
-        result_path = 'D:\Project_AI\SimSwap\demo_file\multi_people_1080p.mp4'
+        # result_path = 'D:\Project_AI\SimSwap\demo_file\multi_people_1080p.mp4'
+        result_path = process_files.swap_video('./uploads/' + target_video.filename,
+                                               './uploads/' + faceswap_image.filename)
         # - Trả về kết quả
         with open(result_path, 'rb') as video_file:
             encoded_video = base64.b64encode(video_file.read()).decode('utf-8')
@@ -108,9 +111,9 @@ class GenerateImageResource(Resource):
         faceswap_image.save('./uploads/' + faceswap_image.filename)
         target_image.save('./uploads/' + target_image.filename)
         # - Gọi hàm xử lý ảnh
-        # result_path = process_files.swap_image('./uploads/' + faceswap_image.filename,
-        #                                        './uploads/' + target_image.filename)
-        result_path = './output/Iron_man.jpg'
+        result_path = process_files.swap_image('./uploads/' + faceswap_image.filename,
+                                               './uploads/' + target_image.filename)
+        # result_path = './output/Iron_man.jpg'
         # - Trả về kết quả
         # Đọc nội dung của file vào dạng base64
         with open(result_path, 'rb') as image_file:

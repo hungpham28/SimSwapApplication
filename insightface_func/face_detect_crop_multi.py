@@ -32,6 +32,7 @@ class Face_detect_crop:
         self.models = {}
         root = os.path.expanduser(root)
         onnx_files = glob.glob(osp.join(root, name, '*.onnx'))
+        print(osp.join(root, name, '*.onnx'))
         onnx_files = sorted(onnx_files)
         for onnx_file in onnx_files:
             if onnx_file.find('_selfgen_')>0:

@@ -65,7 +65,7 @@
                             <div class="card col-md-12">
                                 <div class="card-body">
                                     <h4 class="card-title">Orginal Image</h4>
-                                    <input type="file" name="faceswap_image" class="dropify" data-height="250" accept="image/*"
+                                    <input type="file" name="faceswap_image" class="dropify" data-height="250" accept="image/.jpg"
                                            data-max-file-size="3M"/>
                                 </div>
                             </div>
@@ -87,12 +87,12 @@
                                              style="min-height: 640px;">
                                             <div class="d-flex justify-content-center" style="min-height: 580px;">
                                                 <video id="generatedVideo" style="max-height: 580px; width: 650px"
-                                                       class="img-thumbnail img-fluid mx-auto d-block"
+                                                       class="img-thumbnail img-fluid mx-auto"
                                                        controls>
                                                     Your browser does not support the video tag.
                                                 </video>
                                                 <div id="loading" class="spinner-border text-primary"
-                                                     style="width: 5rem; height: 5rem;margin: auto; display: none"
+                                                     style="width: 5rem; height: 5rem;margin: auto; display: block"
                                                      role="status">
                                                     <span class="sr-only"></span>
                                                 </div>
@@ -138,7 +138,7 @@
         $("#GenerateBtn").click(function () {
             // Lấy dữ liệu từ biểu mẫu
             var formData = new FormData($("#VideoForm")[0]);
-
+            var videoElement = document.getElementById("generatedVideo");
             // Gửi yêu cầu AJAX
             $.ajax({
                 type: "POST",
@@ -147,12 +147,14 @@
                 contentType: false,
                 processData: false,
                 beforeSend: function () {
+                    videoElement.src = "";
+                    videoElement.style.display = "none";
+                    $("#download").attr("href","");
+                    $("#loading").css("display","block");
                     $("#result").show();
-                    $("#loading").show();
                 },
                 success: function (data) {
                     $("#loading").hide();
-                    var videoElement = document.getElementById("generatedVideo");
 
                     // Convert file data to base64 string
                     // Assuming imageData is the base64-encoded video data
